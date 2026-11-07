@@ -1,0 +1,98 @@
+/* Theme variables: every color, font, size, radius and shadow used in the app */
+:root {
+  /* Base colors */
+  --color-background: #F3EEFF;
+  --color-text: #2A2350;
+  --color-text-muted: #6E668F;
+  --color-white: #FFFFFF;
+  --color-black: #000000;
+
+  /* Warm accents: main buttons, urgent states */
+  --color-pink: #FF8FB1;
+  --color-peach: #FFB38A;
+
+  /* Cool accents: brand */
+  --color-sky: #8EC5FF;
+  --color-lilac: #B9A6FF;
+
+  /* Status: booked / success, and readable text on top of mint */
+  --color-mint: #7EE0C3;
+  --color-text-on-mint: #0F4A3A;
+
+  /* Highlights */
+  --color-butter: #FFE08A;
+
+  /* Medium purple used for all glass and clay shadows */
+  --color-shadow: #7864C8;
+
+  /* Gradients built from the colors above */
+  --gradient-warm: linear-gradient(135deg, var(--color-pink), var(--color-peach));
+  --gradient-cool: linear-gradient(135deg, var(--color-sky), var(--color-lilac));
+  --gradient-mint: linear-gradient(135deg, var(--color-mint), var(--color-sky));
+  --gradient-butter: linear-gradient(135deg, var(--color-butter), var(--color-peach));
+
+  /* Soft, see-through accents for the background blobs on body */
+  --color-blob-pink: color-mix(in srgb, var(--color-pink) 30%, transparent);
+  --color-blob-sky: color-mix(in srgb, var(--color-sky) 40%, transparent);
+  --color-blob-butter: color-mix(in srgb, var(--color-butter) 45%, transparent);
+  --color-blob-lilac: color-mix(in srgb, var(--color-lilac) 40%, transparent);
+
+  /* Glass effect for cards */
+  --color-glass: color-mix(in srgb, var(--color-white) 38%, transparent);
+  --color-glass-border: color-mix(in srgb, var(--color-white) 70%, transparent);
+  --glass-blur: 18px;
+
+  /* Shadows: glass cards */
+  --shadow-glass:
+    0 10px 30px color-mix(in srgb, var(--color-shadow) 18%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--color-white) 80%, transparent);
+
+  /* Shadows: clay icons, badges and inputs */
+  --shadow-clay:
+    10px 12px 26px color-mix(in srgb, var(--color-shadow) 22%, transparent),
+    inset -5px -5px 12px color-mix(in srgb, var(--color-shadow) 20%, transparent),
+    inset 5px 5px 12px color-mix(in srgb, var(--color-white) 90%, transparent);
+
+  /* Shadows: warm clay buttons with a pink glow */
+  --shadow-clay-button:
+    inset -3px -3px 8px color-mix(in srgb, var(--color-black) 12%, transparent),
+    inset 3px 3px 8px color-mix(in srgb, var(--color-white) 45%, transparent),
+    6px 8px 16px color-mix(in srgb, var(--color-pink) 45%, transparent);
+
+  /* Shadows: clay buttons in the pressed (active) state */
+  --shadow-clay-pressed:
+    inset 4px 4px 10px color-mix(in srgb, var(--color-shadow) 25%, transparent),
+    inset -3px -3px 8px color-mix(in srgb, var(--color-white) 70%, transparent);
+
+  /* Border radius */
+  --radius-small: 12px;
+  --radius-medium: 18px;
+  --radius-large: 26px;
+  --radius-full: 999px;
+
+  /* Font family (--font-jakarta is set by next/font in app/layout.jsx) */
+  --font-main: var(--font-jakarta), system-ui, sans-serif;
+
+  /* Font weights */
+  --font-weight-body: 500;
+  --font-weight-button: 700;
+  --font-weight-heading: 800;
+
+  /* Line heights */
+  --line-height-body: 1.6;
+  --line-height-heading: 1.1;
+
+  /* Letter spacing */
+  --letter-spacing-body: normal;
+  --letter-spacing-heading: -0.03em;
+
+  /* Font sizes: mobile (tablet and desktop overrides in responsive.css) */
+  --font-size-h1: 2.25rem; /* 36px */
+  --font-size-h2: 1.75rem; /* 28px */
+  --font-size-h3: 1.375rem; /* 22px */
+  --font-size-h4: 1.125rem; /* 18px */
+  --font-size-lead: 1.0625rem; /* 17px */
+  --font-size-body: 1rem; /* 16px */
+  --font-size-small: 0.8125rem; /* 13px */
+  --font-size-button: 0.9375rem; /* 15px */
+}

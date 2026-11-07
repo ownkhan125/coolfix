@@ -1,0 +1,77 @@
+/* Base styles: page background and default typography */
+
+/* Whole page: lavender base with soft color blobs, used on every route */
+body {
+  min-height: 100vh;
+  background-color: var(--color-background);
+  background-image:
+    radial-gradient(circle at 10% 15%, var(--color-blob-pink), transparent 40%),
+    radial-gradient(circle at 90% 10%, var(--color-blob-sky), transparent 40%),
+    radial-gradient(circle at 15% 85%, var(--color-blob-butter), transparent 40%),
+    radial-gradient(circle at 85% 80%, var(--color-blob-lilac), transparent 40%);
+  background-attachment: fixed;
+  color: var(--color-text);
+  font-family: var(--font-main);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-body);
+  line-height: var(--line-height-body);
+  letter-spacing: var(--letter-spacing-body);
+}
+
+/* All headings: heavy weight, tight line height and letter spacing */
+h1,
+h2,
+h3,
+h4 {
+  font-weight: var(--font-weight-heading);
+  line-height: var(--line-height-heading);
+  letter-spacing: var(--letter-spacing-heading);
+}
+
+/* Heading sizes (values change per screen in responsive.css) */
+h1 {
+  font-size: var(--font-size-h1);
+}
+
+h2 {
+  font-size: var(--font-size-h2);
+}
+
+h3 {
+  font-size: var(--font-size-h3);
+}
+
+h4 {
+  font-size: var(--font-size-h4);
+}
+
+/* Muted text: subtitles, helper text and timestamps */
+.text-muted {
+  color: var(--color-text-muted);
+}
+
+/* Lead paragraph: the intro text under section headings */
+.text-lead {
+  font-size: var(--font-size-lead);
+}
+
+/* Small text: captions, labels and footer notes */
+.text-small {
+  font-size: var(--font-size-small);
+}
+
+/* Cool gradient text: highlighted brand words inside headings */
+.text-gradient-cool {
+  background-image: var(--gradient-cool);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+/* Warm gradient text: highlighted urgent or action words inside headings */
+.text-gradient-warm {
+  background-image: var(--gradient-warm);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
