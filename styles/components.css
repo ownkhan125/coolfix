@@ -32,6 +32,13 @@
   box-shadow: var(--shadow-clay-pressed);
 }
 
+/* Clay circle shown while the 3D scene loads: used by components/three/HeroSceneLoader.jsx */
+.clay-placeholder {
+  background-image: var(--gradient-cool);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-clay);
+}
+
 /* Clay button keyboard focus ring */
 .clay-button:focus-visible {
   outline: 3px solid var(--color-lilac);
