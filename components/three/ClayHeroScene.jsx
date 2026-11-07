@@ -45,11 +45,14 @@ export default function ClayHeroScene() {
         camera={{ position: [0, 0.4, 7], fov: 35 }}
         frameloop={isAnimating ? "always" : "demand"}
         gl={{ alpha: true, antialias: true }}
+        // flat = no filmic tone mapping, which otherwise dulls pure white into grey
+        flat
       >
-        {/* Lights: soft fill plus a key light and a cool rim light */}
-        <ambientLight intensity={1.3} />
-        <directionalLight position={[3, 5, 4]} intensity={1.6} />
-        <directionalLight position={[-4, 2, -3]} intensity={0.6} color={sceneColors.sky} />
+        {/* Lights: bright soft fill, white-from-above / lilac-from-below bounce, a key light and a cool rim light */}
+        <ambientLight intensity={1.4} />
+        <hemisphereLight args={[sceneColors.white, sceneColors.lilac, 1]} />
+        <directionalLight position={[3, 5, 4]} intensity={1.4} />
+        <directionalLight position={[-4, 2, -3]} intensity={0.5} color={sceneColors.sky} />
 
         {/* Models: AC unit on the left, fridge on the right (placement props are ready for scroll animation) */}
         <AcUnitModel

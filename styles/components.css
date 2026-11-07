@@ -44,3 +44,70 @@
   outline: 3px solid var(--color-lilac);
   outline-offset: 3px;
 }
+
+/* Secondary clay button (white, purple shadow): used by Button with variant="secondary" */
+.clay-button-secondary {
+  background-image: none;
+  background-color: var(--color-white);
+  box-shadow: var(--shadow-clay);
+}
+
+/* Clay icon tile with an emoji inside: used by components/ui/FeatureCard.jsx */
+.clay-icon {
+  background-color: var(--color-white);
+  border-radius: var(--radius-medium);
+  box-shadow: var(--shadow-clay);
+  font-size: var(--font-size-h3);
+}
+
+/* Mint clay badge: used by components/ui/Badge.jsx */
+.clay-badge {
+  background-color: var(--color-mint);
+  color: var(--color-text-on-mint);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-clay);
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-button);
+}
+
+/* Brand name text: used in the Navbar, Footer and chat demo header */
+.logo-text {
+  color: var(--color-text);
+  font-size: var(--font-size-h4);
+  font-weight: var(--font-weight-heading);
+  letter-spacing: var(--letter-spacing-heading);
+}
+
+/* Navbar section links: used by components/layout/Navbar.jsx */
+.nav-link {
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-button);
+}
+
+.nav-link:hover {
+  color: var(--color-text);
+}
+
+/* Customer chat bubble (right side, cool gradient): used by components/ui/ChatBubble.jsx */
+.chat-bubble-customer {
+  background-image: var(--gradient-cool);
+  color: var(--color-text);
+  border-radius: var(--radius-medium) var(--radius-medium) var(--radius-small) var(--radius-medium);
+}
+
+/* Assistant chat bubble (left side, white clay): used by components/ui/ChatBubble.jsx */
+.chat-bubble-assistant {
+  background-color: var(--color-white);
+  color: var(--color-text);
+  border-radius: var(--radius-medium) var(--radius-medium) var(--radius-medium) var(--radius-small);
+  box-shadow: var(--shadow-clay);
+}
+
+/* Customer photo placeholder in the chat demo: used by components/sections/ChatDemoSection.jsx */
+.photo-placeholder {
+  background-image: var(--gradient-butter);
+  color: var(--color-text);
+  border-radius: var(--radius-medium);
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-button);
+}
