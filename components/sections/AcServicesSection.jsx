@@ -1,11 +1,15 @@
 import FeatureCard from "@/components/ui/FeatureCard";
 
-// AC services: left column kept free for the AC model, heading and 3 service cards on the right
+// AC services: space for the AC model (left column, desktop only), heading and 3 service cards
 export default function AcServicesSection() {
   return (
     <section id="ac-services" className="mx-auto grid w-full max-w-6xl gap-10 px-4 py-20 md:py-28 lg:grid-cols-2">
-      {/* 3D space: the AC model moves here while scrolling (desktop only) */}
-      <div className="hidden lg:block" aria-hidden="true" />
+      {/* 3D space: AC model anchor, desktop only. Sticks in the left column while the cards scroll past. */}
+      <div
+        data-scene-anchor="ac-section"
+        className="hidden lg:sticky lg:top-32 lg:block lg:h-96 lg:self-start"
+        aria-hidden="true"
+      />
 
       {/* Content: heading, intro and service cards */}
       <div>

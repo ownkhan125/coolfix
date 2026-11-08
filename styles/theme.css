@@ -19,6 +19,9 @@
   --color-mint: #7EE0C3;
   --color-text-on-mint: #0F4A3A;
 
+  /* Error text: a darker pink that stays readable on the light background */
+  --color-text-error: #B83260;
+
   /* Highlights */
   --color-butter: #FFE08A;
 
@@ -37,15 +40,34 @@
   --color-blob-butter: color-mix(in srgb, var(--color-butter) 45%, transparent);
   --color-blob-lilac: color-mix(in srgb, var(--color-lilac) 40%, transparent);
 
+  /* Tab bar: soft lilac-tinted clay behind the tabs */
+  --color-tab-list: color-mix(in srgb, var(--color-lilac) 18%, var(--color-white));
+
+  /* Modals: dimmed backdrop behind them, a stronger glass for the panel, and the tallest a panel may get */
+  --color-backdrop: color-mix(in srgb, var(--color-text) 35%, transparent);
+  --backdrop-blur: 4px;
+  --color-glass-strong: color-mix(in srgb, var(--color-white) 82%, transparent);
+  --modal-max-height: 90svh;
+
+  /* Chat widget panel size from tablet up (full screen on mobile) */
+  --chat-panel-width: 24rem;
+  --chat-panel-height: 36rem;
+  --chat-panel-max-height: calc(100svh - 8rem);
+
+  /* Dashboard: sidebar width and lead detail slide-over width (from tablet up) */
+  --dashboard-sidebar-width: 15rem;
+  --slide-over-width: 28rem;
+
   /* Glass effect for cards */
   --color-glass: color-mix(in srgb, var(--color-white) 38%, transparent);
   --color-glass-border: color-mix(in srgb, var(--color-white) 70%, transparent);
   --glass-blur: 18px;
 
-  /* Shadows: glass cards */
+  /* Shadows: glass cards (the highlight alone is used where a drop shadow would be cut off, e.g. inside sliders) */
+  --shadow-glass-highlight: inset 0 1px 0 color-mix(in srgb, var(--color-white) 80%, transparent);
   --shadow-glass:
     0 10px 30px color-mix(in srgb, var(--color-shadow) 18%, transparent),
-    inset 0 1px 0 color-mix(in srgb, var(--color-white) 80%, transparent);
+    var(--shadow-glass-highlight);
 
   /* Shadows: clay icons, badges and inputs */
   --shadow-clay:
@@ -85,6 +107,7 @@
   /* Letter spacing */
   --letter-spacing-body: normal;
   --letter-spacing-heading: -0.03em;
+  --letter-spacing-stars: 0.15em;
 
   /* Font sizes: mobile (tablet and desktop overrides in responsive.css) */
   --font-size-h1: 2.25rem; /* 36px */

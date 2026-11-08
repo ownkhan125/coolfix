@@ -1,4 +1,4 @@
-import Button from "@/components/ui/Button";
+import BookingButton from "@/components/booking/BookingButton";
 
 // Navbar: fixed glass bar with the logo, section links (tablet and up) and the main call-to-action
 export default function Navbar() {
@@ -18,13 +18,16 @@ export default function Navbar() {
           <a href="#how-it-works" className="nav-link">
             How it works
           </a>
+          <a href="#testimonials" className="nav-link">
+            Testimonials
+          </a>
           <a href="#contact" className="nav-link">
             Contact
           </a>
         </div>
 
-        {/* Call-to-action */}
-        <Button href="#contact">Book a fix</Button>
+        {/* Call-to-action: opens the booking modal */}
+        <BookingButton>Book a fix</BookingButton>
       </nav>
     </header>
   );

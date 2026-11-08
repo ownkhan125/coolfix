@@ -1,12 +1,13 @@
 import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
+import BookingButton from "@/components/booking/BookingButton";
 
-// Hero: headline, intro and buttons on the left; space for the 3D models on the right (above the text on mobile)
+// Hero: fills the first screen. Headline, intro and buttons on the left; space for the AC model on the right (desktop only)
 export default function HeroSection() {
   return (
-    <section id="hero" className="mx-auto grid w-full max-w-6xl items-center gap-10 px-4 pt-32 pb-16 lg:grid-cols-2 lg:pt-40">
-      {/* 3D space: kept empty, the fixed 3D canvas shows the models here */}
-      <div className="h-64 md:h-80 lg:order-last lg:h-125" aria-hidden="true" />
+    <section id="hero" className="mx-auto grid min-h-svh w-full max-w-6xl items-center gap-10 px-4 pt-28 pb-16 lg:grid-cols-2">
+      {/* 3D space: kept empty and vertically centered next to the headline; the AC model is fitted inside it (see components/three/scene-placement.js) */}
+      <div data-scene-anchor="ac-hero" className="hidden lg:order-last lg:block lg:h-125" aria-hidden="true" />
 
       {/* Text: badge, headline, intro and call-to-action buttons */}
       <div className="flex flex-col items-start gap-6">
@@ -19,7 +20,7 @@ export default function HeroSection() {
           shows up.
         </p>
         <div className="flex flex-wrap gap-4">
-          <Button href="#contact">Book a fix</Button>
+          <BookingButton>Book a fix</BookingButton>
           <Button href="#how-it-works" variant="secondary">
             See how it works
           </Button>

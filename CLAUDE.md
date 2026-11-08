@@ -35,6 +35,8 @@ The developer is mid-level and must be able to read, own and extend every file w
 ## Code rules
 
 - Write code a mid-level developer can understand in one read. No clever abstractions, no custom hooks, no React Context, no state libraries unless I ask.
+- Allowed exception: BookingModalContext and ChatWidgetContext for global modal state.
+- Exception: `components/three/useSceneScroll.js` is the one allowed custom hook (3D scroll choreography). Section reveal animations use `useGSAP` directly inside each section file.
 - One component per file. Component files use PascalCase (`HeroSection.jsx`). Folders, routes and CSS files use kebab-case.
 - Use descriptive, professional names: `handleBookingSubmit`, `leadScore`, `isMenuOpen`. Never `data`, `temp`, `x`, `fn`.
 - Create a reusable component only when the same UI appears 2 or more times. Keep its props simple (title, text, icon, children).
@@ -67,3 +69,5 @@ The developer is mid-level and must be able to read, own and extend every file w
 - Before creating or changing more than 3 files, show the plan (file names + purpose) and wait for my approval.
 - After each task, give a short summary: files created or changed, and where each new component, function and CSS class lives.
 - Never rewrite or delete code I did not ask you to touch.
+- When I say "do not change anything", only read files, run read-only commands, and report. No edits.
+- Never install packages, tools or skills (including Playwright) without asking me first.

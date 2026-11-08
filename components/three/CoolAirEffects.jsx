@@ -9,56 +9,63 @@ const WAVE_ARC = Math.PI * 0.45;
 
 // Snowflakes: fixed start values (no random numbers, so every render looks the same)
 // x / z = position, speed = cycles per second, delay = where in the fall it starts (0 to 1)
+// Ordered so the first 5 (used on mobile) are spread across the whole width.
+// x stays within ±1.6 so the flakes fit the AC box in scene-placement.js (MODEL_SIZES.ac) and never drift over text.
 const SNOWFLAKES = [
-  { x: -2.4, z: 0.8, speed: 0.07, delay: 0.0, size: 0.09, color: "sky" },
-  { x: -1.7, z: -0.6, speed: 0.06, delay: 0.55, size: 0.07, color: "lilac" },
-  { x: -1.1, z: 1.3, speed: 0.08, delay: 0.3, size: 0.06, color: "sky" },
-  { x: -0.4, z: -0.9, speed: 0.05, delay: 0.8, size: 0.08, color: "lilac" },
-  { x: 0.3, z: 1.5, speed: 0.07, delay: 0.15, size: 0.07, color: "sky" },
-  { x: 0.9, z: -0.5, speed: 0.06, delay: 0.65, size: 0.09, color: "lilac" },
-  { x: 1.5, z: 1.1, speed: 0.08, delay: 0.4, size: 0.06, color: "sky" },
-  { x: 2.1, z: -0.8, speed: 0.05, delay: 0.9, size: 0.08, color: "lilac" },
-  { x: 2.6, z: 0.6, speed: 0.07, delay: 0.2, size: 0.07, color: "sky" },
-  { x: -2.9, z: -0.2, speed: 0.06, delay: 0.7, size: 0.08, color: "lilac" },
+  { x: -1.3, z: 0.8, speed: 0.07, delay: 0.0, size: 0.09, color: "sky" },
+  { x: 1.4, z: 0.6, speed: 0.07, delay: 0.2, size: 0.07, color: "sky" },
+  { x: -0.6, z: 1.3, speed: 0.08, delay: 0.3, size: 0.06, color: "sky" },
+  { x: 0.5, z: -0.5, speed: 0.06, delay: 0.65, size: 0.09, color: "lilac" },
+  { x: 0.15, z: 1.5, speed: 0.07, delay: 0.15, size: 0.07, color: "sky" },
+  { x: -0.95, z: -0.6, speed: 0.06, delay: 0.55, size: 0.07, color: "lilac" },
+  { x: -0.2, z: -0.9, speed: 0.05, delay: 0.8, size: 0.08, color: "lilac" },
+  { x: 0.8, z: 1.1, speed: 0.08, delay: 0.4, size: 0.06, color: "sky" },
+  { x: 1.15, z: -0.8, speed: 0.05, delay: 0.9, size: 0.08, color: "lilac" },
+  { x: -1.5, z: -0.2, speed: 0.06, delay: 0.7, size: 0.08, color: "lilac" },
 ];
 
-// Where a wave is at a point in its cycle (progress goes 0 → 1): moves down and forward, grows, fades in and out
-function getWaveState(progress) {
+// Where a wave is at a point in its cycle (progress 0 → 1): moves down and forward, grows, fades in and out.
+// airStrength (0 → 1, from scroll) makes the waves bigger and brighter.
+// Short travel and small growth keep the waves inside the AC box (MODEL_SIZES.ac in scene-placement.js).
+function getWaveState(progress, airStrength) {
   return {
-    position: [0, 1.1 - progress * 0.9, 0.6 + progress * 0.9],
-    scale: 0.7 + progress * 0.6,
-    opacity: Math.sin(progress * Math.PI) * 0.6,
+    position: [0, 1.1 - progress * 0.6, 0.6 + progress * 0.6],
+    scale: (0.7 + progress * 0.3) * (0.85 + airStrength * 0.3),
+    opacity: Math.sin(progress * Math.PI) * (0.35 + airStrength * 0.4),
   };
 }
 
-// Where a snowflake is at a given time: falls from top to bottom, sways, spins, and shrinks away at both ends
+// Where a snowflake is at a given time: falls from top to bottom, sways, spins, and shrinks away at both ends.
+// The fall goes from y 1.3 to -0.8, which stays inside the AC box.
 function getSnowflakeState(snowflake, time) {
   const progress = (time * snowflake.speed + snowflake.delay) % 1;
   return {
-    position: [snowflake.x + Math.sin(time * 0.8 + snowflake.delay * 6) * 0.15, 2.3 - progress * 4.6, snowflake.z],
+    position: [snowflake.x + Math.sin(time * 0.8 + snowflake.delay * 6) * 0.1, 1.3 - progress * 2.1, snowflake.z],
     rotation: time * 0.6 + snowflake.delay * 6,
     scale: Math.sin(progress * Math.PI),
   };
 }
 
 // Cool air effects: soft air waves from the vent and slowly falling clay snowflakes
-export default function CoolAirEffects({ colors, shouldReduceMotion }) {
+export default function CoolAirEffects({ colors, shouldReduceMotion, sceneStateRef, snowflakeCount }) {
   const waveRefs = useRef([]);
   const snowflakeRefs = useRef([]);
+  const visibleSnowflakes = SNOWFLAKES.slice(0, snowflakeCount);
 
   useFrame((state) => {
     if (shouldReduceMotion) return;
     const time = state.clock.elapsedTime;
+    const airStrength = sceneStateRef.current.airStrength;
 
     WAVE_START_OFFSETS.forEach((startOffset, index) => {
       const wave = waveRefs.current[index];
-      const waveState = getWaveState((time / WAVE_CYCLE_SECONDS + startOffset) % 1);
+      const waveState = getWaveState((time / WAVE_CYCLE_SECONDS + startOffset) % 1, airStrength);
       wave.position.set(...waveState.position);
       wave.scale.setScalar(waveState.scale);
       wave.material.opacity = waveState.opacity;
     });
 
-    SNOWFLAKES.forEach((snowflake, index) => {
+    visibleSnowflakes.forEach((snowflake, index) => {
       const flake = snowflakeRefs.current[index];
       const flakeState = getSnowflakeState(snowflake, time);
       flake.position.set(...flakeState.position);
@@ -71,7 +78,7 @@ export default function CoolAirEffects({ colors, shouldReduceMotion }) {
     <group>
       {/* Air waves: thin sky-blue arcs, turned so the curve hangs below the vent like a smile */}
       {WAVE_START_OFFSETS.map((startOffset, index) => {
-        const waveState = getWaveState(startOffset);
+        const waveState = getWaveState(startOffset, 0);
         return (
           <mesh
             key={startOffset}
@@ -93,7 +100,7 @@ export default function CoolAirEffects({ colors, shouldReduceMotion }) {
       })}
 
       {/* Snowflakes: clay flakes in sky or lilac */}
-      {SNOWFLAKES.map((snowflake, index) => {
+      {visibleSnowflakes.map((snowflake, index) => {
         const flakeState = getSnowflakeState(snowflake, 0);
         return (
           <ClaySnowflake

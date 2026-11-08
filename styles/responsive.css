@@ -6,6 +6,35 @@
 
 /* Tablet */
 @media (min-width: 768px) {
+  /* Booking modal: a centered dialog with all corners rounded (a bottom sheet on mobile) */
+  .modal-panel {
+    border-radius: var(--radius-large);
+  }
+
+  /* Dashboard: the bottom tab bar becomes a rounded glass sidebar */
+  .dashboard-sidebar {
+    width: var(--dashboard-sidebar-width);
+    flex-shrink: 0;
+    border: 1px solid var(--color-glass-border);
+    border-radius: var(--radius-large);
+    box-shadow: var(--shadow-glass);
+  }
+
+  /* Lead detail slide-over: a fixed-width panel instead of full width */
+  .slide-over-panel {
+    max-width: var(--slide-over-width);
+  }
+
+  /* Chat panel: a rounded glass panel above the launcher instead of full screen */
+  .chat-panel {
+    width: var(--chat-panel-width);
+    height: var(--chat-panel-height);
+    max-height: var(--chat-panel-max-height);
+    border: 1px solid var(--color-glass-border);
+    border-radius: var(--radius-large);
+    box-shadow: var(--shadow-glass);
+  }
+
   :root {
     --font-size-h1: 3rem; /* 48px */
     --font-size-h2: 2.25rem; /* 36px */

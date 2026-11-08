@@ -1,9 +1,16 @@
 import FeatureCard from "@/components/ui/FeatureCard";
 
-// Fridge services: heading and 2 service cards on the left, right column kept free for the fridge model
+// Fridge services: space for the fridge model (right column, desktop only), heading and 2 cards
 export default function FridgeServicesSection() {
   return (
     <section id="fridge-services" className="mx-auto grid w-full max-w-6xl gap-10 px-4 py-20 md:py-28 lg:grid-cols-2">
+      {/* 3D space: fridge model anchor, desktop only. Sits in the right column and sticks while the section scrolls. */}
+      <div
+        data-scene-anchor="fridge-section"
+        className="hidden lg:sticky lg:top-32 lg:order-last lg:block lg:h-96 lg:self-start"
+        aria-hidden="true"
+      />
+
       {/* Content: heading, intro and service cards */}
       <div>
         <h2>Fridge not cold? We&apos;ll bring it back</h2>
@@ -24,9 +31,6 @@ export default function FridgeServicesSection() {
           />
         </div>
       </div>
-
-      {/* 3D space: the fridge model slides in here while scrolling (desktop only) */}
-      <div className="hidden lg:block" aria-hidden="true" />
     </section>
   );
 }

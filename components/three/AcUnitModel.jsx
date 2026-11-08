@@ -1,8 +1,9 @@
 import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
-import { RoundedBox } from "@react-three/drei";
+import { ContactShadows, RoundedBox } from "@react-three/drei";
 import { MathUtils } from "three";
 import CoolAirEffects from "./CoolAirEffects";
+import { applyModelPlacement } from "./scene-placement";
 
 // Clay look shared by every part: fully matte, no metal
 const CLAY_ROUGHNESS = 0.9;
@@ -10,13 +11,16 @@ const CLAY_ROUGHNESS = 0.9;
 // How far the unit turns toward the mouse, in radians (about 8 degrees)
 const MOUSE_TILT_ANGLE = 0.14;
 
-// Wall-mounted split AC unit built from rounded shapes, with float, flap and mouse-tilt animations.
-// position / rotation / scale place the whole unit (a scroll animation will drive them later).
-export default function AcUnitModel({ colors, shouldReduceMotion, position, rotation, scale }) {
+// Wall-mounted split AC unit built from rounded shapes.
+// Outer group sits on its page anchor (see scene-placement.js); inner group runs float, flap and mouse tilt.
+export default function AcUnitModel({ colors, shouldReduceMotion, sceneStateRef, snowflakeCount }) {
+  const placementRef = useRef(null);
   const unitRef = useRef(null);
   const flapRef = useRef(null);
 
   useFrame((state) => {
+    // Placement: follow the page anchors (reduced motion turns instantly instead of easing)
+    applyModelPlacement(placementRef.current, "ac", sceneStateRef.current, state, shouldReduceMotion ? 1 : 0.1);
     if (shouldReduceMotion) return;
 
     const time = state.clock.elapsedTime;
@@ -25,7 +29,7 @@ export default function AcUnitModel({ colors, shouldReduceMotion, position, rota
     // Float slowly up and down
     unit.position.y = 0.6 + Math.sin(time * 0.8) * 0.12;
 
-    // Ease a little toward the mouse (pointer goes from -1 to 1 across the canvas)
+    // Ease a little toward the mouse (pointer goes from -1 to 1 across the screen)
     unit.rotation.y = MathUtils.lerp(unit.rotation.y, state.pointer.x * MOUSE_TILT_ANGLE, 0.05);
     unit.rotation.x = MathUtils.lerp(unit.rotation.x, -state.pointer.y * MOUSE_TILT_ANGLE, 0.05);
 
@@ -34,8 +38,7 @@ export default function AcUnitModel({ colors, shouldReduceMotion, position, rota
   });
 
   return (
-    // Outer group: placement from props. Inner group: idle float and tilt.
-    <group position={position} rotation={rotation} scale={scale}>
+    <group ref={placementRef}>
       <group ref={unitRef} position={[0, 0.6, 0]}>
         {/* Body: big rounded white box */}
         <RoundedBox args={[3, 1.1, 0.9]} radius={0.3} smoothness={4}>
@@ -67,8 +70,25 @@ export default function AcUnitModel({ colors, shouldReduceMotion, position, rota
         </mesh>
       </group>
 
-      {/* Air waves and snowflakes: inside the outer group so they stay with the unit when it moves */}
-      <CoolAirEffects colors={colors} shouldReduceMotion={shouldReduceMotion} />
+      {/* Shadow: soft purple blur under the unit, travels with it (drawn once when motion is reduced) */}
+      <ContactShadows
+        position={[0, -0.9, 0]}
+        color={colors.shadow}
+        opacity={0.3}
+        blur={2.5}
+        scale={4}
+        far={2}
+        resolution={128}
+        frames={shouldReduceMotion ? 1 : Infinity}
+      />
+
+      {/* Air waves and snowflakes: inside the placement group so they stay with the unit when it moves */}
+      <CoolAirEffects
+        colors={colors}
+        shouldReduceMotion={shouldReduceMotion}
+        sceneStateRef={sceneStateRef}
+        snowflakeCount={snowflakeCount}
+      />
     </group>
   );
 }

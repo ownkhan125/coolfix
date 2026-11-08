@@ -1,9 +1,20 @@
-import Badge from "@/components/ui/Badge";
-import ChatBubble from "@/components/ui/ChatBubble";
-import GlassCard from "@/components/ui/GlassCard";
+"use client";
 
-// Chat demo: intro text and a static mockup of a customer chatting with the assistant
+import { useState } from "react";
+import { AnimatePresence } from "motion/react";
+import GlassCard from "@/components/ui/GlassCard";
+import Tabs from "@/components/ui/Tabs";
+import TabButton from "@/components/ui/TabButton";
+import TabPanel from "@/components/ui/TabPanel";
+import AcNotCoolingChat from "./chat-demo/AcNotCoolingChat";
+import FridgeNoiseChat from "./chat-demo/FridgeNoiseChat";
+import GasLeakChat from "./chat-demo/GasLeakChat";
+
+// Chat demo: intro text, a tab bar with three demo problems, and the glass chat card showing the chosen conversation
 export default function ChatDemoSection() {
+  // Which demo conversation is shown: "ac-not-cooling", "fridge-noise" or "gas-leak"
+  const [activeTab, setActiveTab] = useState("ac-not-cooling");
+
   return (
     <section id="chat-demo" className="mx-auto grid w-full max-w-6xl items-center gap-10 px-4 py-20 md:py-28 lg:grid-cols-2">
       {/* Text: heading and intro */}
@@ -16,30 +27,59 @@ export default function ChatDemoSection() {
         </p>
       </div>
 
-      {/* Chat mockup: header, messages, photo and booking badge */}
-      <GlassCard>
-        <div className="mb-6 flex items-center justify-between gap-4">
-          <p className="logo-text">CoolFix assistant</p>
-          <p className="text-small text-muted">Online</p>
-        </div>
+      {/* Demo: tab bar above the glass chat card */}
+      <div className="flex flex-col gap-6">
+        <Tabs label="Demo conversations">
+          <TabButton
+            id="chat-tab-ac-not-cooling"
+            label="AC not cooling"
+            panelId="chat-demo-panel"
+            isActive={activeTab === "ac-not-cooling"}
+            onSelect={() => setActiveTab("ac-not-cooling")}
+          />
+          <TabButton
+            id="chat-tab-fridge-noise"
+            label="Fridge noise"
+            panelId="chat-demo-panel"
+            isActive={activeTab === "fridge-noise"}
+            onSelect={() => setActiveTab("fridge-noise")}
+          />
+          <TabButton
+            id="chat-tab-gas-leak"
+            label="Gas leak"
+            panelId="chat-demo-panel"
+            isActive={activeTab === "gas-leak"}
+            onSelect={() => setActiveTab("gas-leak")}
+          />
+        </Tabs>
 
-        <div className="flex flex-col gap-4">
-          <ChatBubble isCustomer text="Hi! My AC is blowing warm air since this morning. Here's a photo." />
-
-          {/* Customer photo placeholder */}
-          <div className="flex justify-end">
-            <div className="photo-placeholder flex h-28 w-44 items-center justify-center" role="img" aria-label="Customer photo of the AC unit">
-              📷 AC photo
-            </div>
+        <GlassCard>
+          {/* Chat header */}
+          <div className="mb-6 flex items-center justify-between gap-4">
+            <p className="logo-text">CoolFix assistant</p>
+            <p className="text-small text-muted">Online</p>
           </div>
 
-          <ChatBubble text="Thanks! It looks like low gas in your split AC. A refill should fix it. I booked today at 4:00 PM for you." />
-
-          <div className="flex justify-start">
-            <Badge>✓ Booked · Today, 4:00 PM</Badge>
-          </div>
-        </div>
-      </GlassCard>
+          {/* Conversation: only the active tab's panel is shown; mode="wait" lets the old one leave first */}
+          <AnimatePresence mode="wait" initial={false}>
+            {activeTab === "ac-not-cooling" && (
+              <TabPanel key="ac-not-cooling" id="chat-demo-panel" tabId="chat-tab-ac-not-cooling">
+                <AcNotCoolingChat />
+              </TabPanel>
+            )}
+            {activeTab === "fridge-noise" && (
+              <TabPanel key="fridge-noise" id="chat-demo-panel" tabId="chat-tab-fridge-noise">
+                <FridgeNoiseChat />
+              </TabPanel>
+            )}
+            {activeTab === "gas-leak" && (
+              <TabPanel key="gas-leak" id="chat-demo-panel" tabId="chat-tab-gas-leak">
+                <GasLeakChat />
+              </TabPanel>
+            )}
+          </AnimatePresence>
+        </GlassCard>
+      </div>
     </section>
   );
 }

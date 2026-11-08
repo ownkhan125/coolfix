@@ -1,19 +1,22 @@
 import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
-import { RoundedBox } from "@react-three/drei";
+import { ContactShadows, RoundedBox } from "@react-three/drei";
 import FridgeMist from "./FridgeMist";
+import { applyModelPlacement } from "./scene-placement";
 
 // Clay look shared by every part: fully matte, no metal
 const CLAY_ROUGHNESS = 0.9;
 
-// Door timing: an 8 second cycle; during the first 30% the door opens and closes, then it rests
+// Idle door timing: an 8 second cycle; during the first 30% the door opens a little and closes, then it rests
 const DOOR_CYCLE_SECONDS = 8;
 const DOOR_OPEN_PART = 0.3;
 const DOOR_OPEN_ANGLE = 0.35; // radians, about 20 degrees
+const DOOR_SCROLL_ANGLE = 1.3; // radians, about 75 degrees when scrolled fully open
 
 // Tall two-door clay fridge with float, door and inside-glow animations, plus mist from the door.
-// position / rotation / scale place the whole fridge (a scroll animation will drive them later).
-export default function FridgeModel({ colors, shouldReduceMotion, position, rotation, scale }) {
+// Outer group sits on its page anchor (see scene-placement.js); inner group runs the idle float.
+export default function FridgeModel({ colors, shouldReduceMotion, sceneStateRef }) {
+  const placementRef = useRef(null);
   const fridgeRef = useRef(null);
   const doorRef = useRef(null);
   const glowMaterialRef = useRef(null);
@@ -21,6 +24,8 @@ export default function FridgeModel({ colors, shouldReduceMotion, position, rota
   const doorStateRef = useRef({ progress: 0, openness: 0 });
 
   useFrame((state) => {
+    // Placement: follow the page anchors (reduced motion turns instantly instead of easing)
+    applyModelPlacement(placementRef.current, "fridge", sceneStateRef.current, state, shouldReduceMotion ? 1 : 0.1);
     if (shouldReduceMotion) return;
     const time = state.clock.elapsedTime;
 
@@ -33,14 +38,29 @@ export default function FridgeModel({ colors, shouldReduceMotion, position, rota
     const openness = doorProgress < 1 ? Math.sin(doorProgress * Math.PI) : 0;
     doorStateRef.current = { progress: doorProgress, openness };
 
+    // Door and glow: whichever is bigger wins, the idle peek or the scroll opening
+    const scrollDoorOpen = sceneStateRef.current.doorOpen;
+    const doorAngle = Math.max(openness * DOOR_OPEN_ANGLE, scrollDoorOpen * DOOR_SCROLL_ANGLE);
     // Hinge on the left edge: a negative angle swings the right edge toward the camera
-    doorRef.current.rotation.y = -openness * DOOR_OPEN_ANGLE;
-    glowMaterialRef.current.emissiveIntensity = openness * 1.2;
+    doorRef.current.rotation.y = -doorAngle;
+    glowMaterialRef.current.emissiveIntensity = Math.max(openness, scrollDoorOpen) * 1.2;
   });
 
   return (
-    // Outer group: placement from props. Inner group: idle float.
-    <group position={position} rotation={rotation} scale={scale}>
+    // Outer group: anchor placement. Inner group: idle float.
+    <group ref={placementRef}>
+      {/* Shadow: soft purple blur under the fridge, travels with it (drawn once when motion is reduced) */}
+      <ContactShadows
+        position={[0, -1.4, 0]}
+        color={colors.shadow}
+        opacity={0.3}
+        blur={2.5}
+        scale={3}
+        far={3}
+        resolution={128}
+        frames={shouldReduceMotion ? 1 : Infinity}
+      />
+
       <group ref={fridgeRef}>
         {/* Body: tall rounded white box */}
         <RoundedBox args={[1.3, 2.6, 1]} radius={0.25} smoothness={4}>

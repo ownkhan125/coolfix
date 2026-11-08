@@ -111,3 +111,455 @@
   font-size: var(--font-size-small);
   font-weight: var(--font-weight-button);
 }
+
+/* Lead score chip (butter clay): used by components/ui/Badge.jsx with variant="score" */
+.clay-badge-score {
+  background-color: var(--color-butter);
+  color: var(--color-text);
+}
+
+/* Urgent chip (warm pink clay): used by components/ui/Badge.jsx with variant="urgent" */
+.clay-badge-urgent {
+  background-color: var(--color-pink);
+  color: var(--color-text);
+}
+
+/* Tab bar (raised clay pill): used by components/ui/Tabs.jsx */
+.clay-tab-list {
+  background-color: var(--color-tab-list);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-clay);
+}
+
+/* One tab, inactive state (pressed into the bar): used by components/ui/TabButton.jsx */
+.clay-tab {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-button);
+  border: none;
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-clay-pressed);
+  background-color: transparent;
+  cursor: pointer;
+}
+
+/* Active tab: dark label, the bead covers the pressed shadow */
+.clay-tab-active {
+  color: var(--color-text);
+}
+
+/* Tab keyboard focus ring */
+.clay-tab:focus-visible {
+  outline: 3px solid var(--color-lilac);
+  outline-offset: 2px;
+}
+
+/* Sliding bead behind the active tab (raised white clay): used by components/ui/TabButton.jsx */
+.clay-tab-bead {
+  background-color: var(--color-white);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-clay);
+}
+
+/* AC service badge (sky clay): used by components/ui/Badge.jsx with variant="sky" */
+.clay-badge-sky {
+  background-color: var(--color-sky);
+  color: var(--color-text);
+}
+
+/* Fridge service badge (lilac clay): used by components/ui/Badge.jsx with variant="lilac" */
+.clay-badge-lilac {
+  background-color: var(--color-lilac);
+  color: var(--color-text);
+}
+
+/* Glass swiper slides: used by components/ui/GlassSwiper.jsx.
+   height auto + grid = every slide stretches to the tallest card, so all cards are the same height */
+.glass-swiper .swiper-slide {
+  display: grid;
+  height: auto;
+}
+
+/* Glass cards inside the swiper: no drop shadow. Swiper clips everything outside its box,
+   so a drop shadow would show as a faint tinted rectangle with hard edges between and around the cards. */
+.glass-swiper .glass-card {
+  box-shadow: var(--shadow-glass-highlight);
+}
+
+/* Autoplay progress line under the swiper controls: used by components/ui/GlassSwiper.jsx */
+.swiper-progress-track {
+  background-color: var(--color-tab-list);
+  border-radius: var(--radius-full);
+}
+
+/* Progress line fill (cool gradient, grows from left to right) */
+.swiper-progress-fill {
+  background-image: var(--gradient-cool);
+  border-radius: var(--radius-full);
+}
+
+/* Round white clay button (slider arrows): used by components/ui/GlassSwiper.jsx */
+.clay-round-button {
+  background-color: var(--color-white);
+  color: var(--color-text);
+  border: none;
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-clay);
+  cursor: pointer;
+}
+
+/* Round clay button keyboard focus ring */
+.clay-round-button:focus-visible {
+  outline: 3px solid var(--color-lilac);
+  outline-offset: 3px;
+}
+
+/* Slider dot (pressed-in clay): used by components/ui/GlassSwiper.jsx */
+.clay-dot {
+  background-color: var(--color-tab-list);
+  border: none;
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-clay-pressed);
+  cursor: pointer;
+}
+
+/* Active slider dot: raised cool gradient pill */
+.clay-dot-active {
+  background-image: var(--gradient-cool);
+  box-shadow: var(--shadow-clay);
+}
+
+/* Slider dot keyboard focus ring */
+.clay-dot:focus-visible {
+  outline: 3px solid var(--color-lilac);
+  outline-offset: 3px;
+}
+
+/* Clay avatar circle with initials: used by components/ui/TestimonialCard.jsx */
+.clay-avatar {
+  background-image: var(--gradient-cool);
+  color: var(--color-text);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-clay);
+  font-weight: var(--font-weight-heading);
+}
+
+/* Customer name on a testimonial card */
+.testimonial-name {
+  font-weight: var(--font-weight-button);
+}
+
+/* Five butter stars on a testimonial card */
+.testimonial-stars {
+  color: var(--color-butter);
+  font-size: var(--font-size-small);
+  letter-spacing: var(--letter-spacing-stars);
+}
+
+/* Clay button while disabled (busy submit): used by components/ui/Button.jsx */
+.clay-button:disabled {
+  opacity: 0.7;
+  cursor: progress;
+}
+
+/* Dimmed backdrop behind modals: used by components/booking/BookingModal.jsx */
+.modal-backdrop {
+  background-color: var(--color-backdrop);
+  backdrop-filter: blur(var(--backdrop-blur));
+  -webkit-backdrop-filter: blur(var(--backdrop-blur));
+}
+
+/* Glass modal panel. Mobile: bottom sheet with rounded top corners (all corners from tablet up, in responsive.css) */
+.modal-panel {
+  max-height: var(--modal-max-height);
+  background-color: var(--color-glass-strong);
+  border: 1px solid var(--color-glass-border);
+  border-radius: var(--radius-large) var(--radius-large) 0 0;
+  box-shadow: var(--shadow-glass);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+}
+
+/* Modal title */
+.modal-title {
+  font-size: var(--font-size-h3);
+}
+
+/* Form label (also used as the legend of option groups): used by components/ui/FormField.jsx and the booking form */
+.field-label {
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-button);
+}
+
+/* Friendly error message under a form field */
+.field-error {
+  color: var(--color-text-error);
+  font-size: var(--font-size-small);
+}
+
+/* Clay input (pressed into the surface): text inputs, textarea and date in the booking form */
+.clay-input {
+  background-color: var(--color-white);
+  color: var(--color-text);
+  border: none;
+  border-radius: var(--radius-medium);
+  box-shadow: var(--shadow-clay-pressed);
+  font-size: var(--font-size-body);
+}
+
+.clay-input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.clay-input:focus-visible {
+  outline: 3px solid var(--color-lilac);
+  outline-offset: 2px;
+}
+
+/* Invalid input: pink outline so the field with the error is easy to spot */
+.clay-input[aria-invalid="true"] {
+  outline: 2px solid var(--color-pink);
+}
+
+/* Focus ring for clay options built on hidden radio inputs (appliance toggle, time slot chips) */
+.clay-tab:has(input:focus-visible),
+.clay-chip:has(input:focus-visible) {
+  outline: 3px solid var(--color-lilac);
+  outline-offset: 2px;
+}
+
+/* Time slot chip (white clay): used by components/booking/TimeSlotPicker.jsx */
+.clay-chip {
+  background-color: var(--color-white);
+  color: var(--color-text);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-clay);
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-button);
+  cursor: pointer;
+}
+
+/* Chosen time slot: mint, pressed in */
+.clay-chip-selected {
+  background-image: var(--gradient-mint);
+  box-shadow: var(--shadow-clay-pressed);
+}
+
+/* Photo drop zone (dashed lilac border): used by components/booking/PhotoUpload.jsx */
+.upload-dropzone {
+  background-color: var(--color-glass);
+  color: var(--color-text-muted);
+  border: 2px dashed var(--color-lilac);
+  border-radius: var(--radius-medium);
+  cursor: pointer;
+}
+
+/* Drop zone while a file is dragged over it */
+.upload-dropzone-active {
+  background-color: var(--color-tab-list);
+  border-color: var(--color-sky);
+}
+
+.upload-dropzone:focus-visible {
+  outline: 3px solid var(--color-lilac);
+  outline-offset: 2px;
+}
+
+/* "browse" word inside the drop zone */
+.upload-link {
+  color: var(--color-text);
+  font-weight: var(--font-weight-button);
+  text-decoration: underline;
+}
+
+/* Photo preview thumbnail */
+.upload-thumb {
+  border-radius: var(--radius-small);
+  box-shadow: var(--shadow-clay);
+}
+
+/* Mint clay circle with a check mark: used by components/booking/BookingSuccess.jsx */
+.clay-success-icon {
+  background-image: var(--gradient-mint);
+  color: var(--color-text-on-mint);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-clay);
+}
+
+/* Floating chat button (cool clay circle): used by components/chat/ChatLauncher.jsx */
+.chat-launcher {
+  background-image: var(--gradient-cool);
+  color: var(--color-text);
+  border: none;
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-clay);
+  cursor: pointer;
+}
+
+.chat-launcher:focus-visible {
+  outline: 3px solid var(--color-lilac);
+  outline-offset: 3px;
+}
+
+/* Chat panel (strong glass). Mobile: full screen; tablet and up: a rounded corner panel (in responsive.css).
+   Used by components/chat/ChatPanel.jsx */
+.chat-panel {
+  background-color: var(--color-glass-strong);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+}
+
+/* Chat panel header and composer: thin glass lines that separate them from the messages */
+.chat-panel-header {
+  border-bottom: 1px solid var(--color-glass-border);
+}
+
+.chat-composer {
+  border-top: 1px solid var(--color-glass-border);
+}
+
+/* Assistant name in the chat panel header */
+.chat-panel-title {
+  font-size: var(--font-size-h4);
+}
+
+/* Mint "online" dot with a white ring: chat launcher and chat panel header */
+.online-dot {
+  background-color: var(--color-mint);
+  border: 2px solid var(--color-white);
+  border-radius: var(--radius-full);
+}
+
+/* One dot of the typing indicator: used by components/chat/TypingIndicator.jsx */
+.typing-dot {
+  background-color: var(--color-text-muted);
+  border-radius: var(--radius-full);
+}
+
+/* Photo inside a chat bubble: used by components/ui/ChatBubble.jsx */
+.chat-photo {
+  border-radius: var(--radius-small);
+}
+
+/* Send button in the chat composer (warm clay circle) */
+.clay-send-button {
+  background-image: var(--gradient-warm);
+  color: var(--color-text);
+  border: none;
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-clay-button);
+  cursor: pointer;
+}
+
+.clay-send-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.clay-send-button:focus-visible {
+  outline: 3px solid var(--color-lilac);
+  outline-offset: 3px;
+}
+
+/* Small "Owner login" link in the footer: used by components/layout/Footer.jsx */
+.footer-link {
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-button);
+  text-decoration: underline;
+}
+
+.footer-link:hover {
+  color: var(--color-text);
+}
+
+/* Dashboard navigation. Mobile: a glass bottom tab bar; tablet and up: a glass sidebar (in responsive.css).
+   Used by components/dashboard/DashboardSidebar.jsx */
+.dashboard-sidebar {
+  background-color: var(--color-glass-strong);
+  border-top: 1px solid var(--color-glass-border);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+}
+
+/* One dashboard nav link: used by components/dashboard/DashboardNavLink.jsx */
+.dashboard-nav-link {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-button);
+  border-radius: var(--radius-full);
+}
+
+/* Active nav link: dark text on the raised clay bead */
+.dashboard-nav-link-active {
+  color: var(--color-text);
+}
+
+.dashboard-nav-link:focus-visible {
+  outline: 3px solid var(--color-lilac);
+  outline-offset: 2px;
+}
+
+/* Page title on dashboard pages (smaller than the home page h1) */
+.dashboard-title {
+  font-size: var(--font-size-h2);
+}
+
+/* Small heading inside dashboard cards and panels */
+.dashboard-card-title {
+  font-size: var(--font-size-h4);
+  font-weight: var(--font-weight-heading);
+}
+
+/* Big number on an Overview stat card: used by components/dashboard/StatCard.jsx */
+.stat-value {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-heading);
+  line-height: var(--line-height-heading);
+}
+
+/* Lead and booking rows (light glass): components/dashboard/LeadsView.jsx and the Bookings page */
+.lead-row,
+.booking-row {
+  background-color: var(--color-glass);
+  color: var(--color-text);
+  border: 1px solid var(--color-glass-border);
+  border-radius: var(--radius-medium);
+  box-shadow: var(--shadow-glass);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+}
+
+.lead-row {
+  cursor: pointer;
+}
+
+.lead-row:focus-visible {
+  outline: 3px solid var(--color-lilac);
+  outline-offset: 2px;
+}
+
+/* Customer name and other bold values in dashboard rows and panels */
+.lead-name {
+  font-weight: var(--font-weight-button);
+}
+
+/* Lead detail slide-over (strong glass, full width on mobile): used by components/dashboard/LeadDetailPanel.jsx */
+.slide-over-panel {
+  background-color: var(--color-glass-strong);
+  border-left: 1px solid var(--color-glass-border);
+  box-shadow: var(--shadow-glass);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+}
+
+/* AI summary box in the lead detail panel (soft lilac tint) */
+.ai-summary {
+  background-color: var(--color-tab-list);
+  border-radius: var(--radius-medium);
+}
+
+/* Timeline dot in the lead activity log */
+.activity-dot {
+  background-color: var(--color-lilac);
+  border-radius: var(--radius-full);
+}
