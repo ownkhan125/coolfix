@@ -3,14 +3,16 @@
 import { useEffect, useRef } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import Badge from "@/components/ui/Badge";
+import StageSelect from "./StageSelect";
 
 // Everything inside the panel that can take keyboard focus (used to keep Tab inside the panel)
-const FOCUSABLE_SELECTOR = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
+const FOCUSABLE_SELECTOR = 'a[href], button:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
-// Lead detail panel: glass slide-over from the right with the photo, contact details, AI summary and activity log.
+// Lead detail panel: glass slide-over from the right with the badges, "Move to" dropdown, photo, contact details,
+// AI summary (chat leads only) and activity log.
 // Shown while lead is not null. Esc or a backdrop click closes it, Tab stays inside, page scroll is locked.
-// scoreVariant / statusVariant: badge colors, decided by LeadsView.
-export default function LeadDetailPanel({ lead, onClose, scoreVariant, statusVariant }) {
+// onStageChange(leadId, newStage) comes from LeadsView.
+export default function LeadDetailPanel({ lead, onClose, onStageChange }) {
   const panelRef = useRef(null);
   const shouldReduceMotion = useReducedMotion();
   const isOpen = lead !== null;
@@ -101,12 +103,21 @@ export default function LeadDetailPanel({ lead, onClose, scoreVariant, statusVar
               </button>
             </div>
 
-            {/* Chips: lead score, status and appliance */}
+            {/* Chips: hot / score (form leads are always hot, chat leads show the AI score) and appliance */}
             <div className="flex flex-wrap gap-2">
-              <Badge variant={scoreVariant}>Score {lead.leadScore}</Badge>
-              <Badge variant={statusVariant}>{lead.status}</Badge>
+              {lead.source === "form" ? (
+                <Badge variant="urgent">Hot · Form</Badge>
+              ) : (
+                <Badge variant={lead.isHot ? "urgent" : "score"}>
+                  Score {lead.leadScore}
+                  {lead.isHot && " · Hot"}
+                </Badge>
+              )}
               <Badge variant={lead.appliance === "AC" ? "sky" : "lilac"}>{lead.appliance}</Badge>
             </div>
+
+            {/* Pipeline stage */}
+            <StageSelect id="lead-detail-stage" value={lead.stage} onStageChange={(newStage) => onStageChange(lead.id, newStage)} />
 
             {/* Customer photo placeholder */}
             <div className="photo-placeholder flex h-44 items-center justify-center" role="img" aria-label={`Photo sent by ${lead.name}`}>
@@ -129,13 +140,15 @@ export default function LeadDetailPanel({ lead, onClose, scoreVariant, statusVar
               </div>
             </dl>
 
-            {/* AI summary */}
-            <section className="ai-summary flex flex-col gap-2 p-4" aria-labelledby="lead-ai-summary-title">
-              <h3 id="lead-ai-summary-title" className="dashboard-card-title">
-                AI summary
-              </h3>
-              <p>{lead.aiSummary}</p>
-            </section>
+            {/* AI summary: chat leads only (form leads have no AI summary) */}
+            {lead.aiSummary && (
+              <section className="ai-summary flex flex-col gap-2 p-4" aria-labelledby="lead-ai-summary-title">
+                <h3 id="lead-ai-summary-title" className="dashboard-card-title">
+                  AI summary
+                </h3>
+                <p>{lead.aiSummary}</p>
+              </section>
+            )}
 
             {/* Activity log: newest last */}
             <section className="flex flex-col gap-3" aria-labelledby="lead-activity-title">

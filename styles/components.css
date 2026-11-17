@@ -517,8 +517,8 @@
   line-height: var(--line-height-heading);
 }
 
-/* Lead and booking rows (light glass): components/dashboard/LeadsView.jsx and the Bookings page */
-.lead-row,
+/* Lead cards and booking rows (light glass): components/dashboard/LeadCard.jsx and the Bookings page */
+.lead-card,
 .booking-row {
   background-color: var(--color-glass);
   color: var(--color-text);
@@ -529,13 +529,31 @@
   -webkit-backdrop-filter: blur(var(--glass-blur));
 }
 
-.lead-row {
+/* Clickable top part of a lead card (opens the lead detail panel): components/dashboard/LeadCard.jsx */
+.lead-card-open {
   cursor: pointer;
+  border-radius: var(--radius-small);
 }
 
-.lead-row:focus-visible {
+.lead-card-open:focus-visible {
   outline: 3px solid var(--color-lilac);
-  outline-offset: 2px;
+  outline-offset: 4px;
+}
+
+/* One pipeline column (soft lilac clay tray): components/dashboard/PipelineColumn.jsx */
+.pipeline-column {
+  background-color: var(--color-tab-list);
+  border-radius: var(--radius-large);
+  box-shadow: var(--shadow-clay-pressed);
+}
+
+/* Lead count chip in a pipeline column header */
+.pipeline-count {
+  background-color: var(--color-white);
+  color: var(--color-text);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-button);
 }
 
 /* Customer name and other bold values in dashboard rows and panels */

@@ -1,86 +1,58 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { motion, useReducedMotion } from "motion/react";
-import Badge from "@/components/ui/Badge";
+import { useState } from "react";
 import LeadDetailPanel from "./LeadDetailPanel";
+import PipelineColumn from "./PipelineColumn";
 
-// Leads with this score or higher count as hot (pink chip)
-const HOT_LEAD_SCORE = 85;
-
-// Badge color per lead status
-const STATUS_BADGE_VARIANTS = { New: "sky", Contacted: "lilac", Booked: "mint" };
-
-// Leads view: list of leads (name, issue, lead score, status). Clicking a lead opens its detail panel.
-// leads come from the page (dummy data for now, Supabase later).
+// Leads view: the pipeline board (New, Contacted, Booked, Completed, Lost).
+// The owner moves a lead with the "Move to" dropdown on its card or in the detail panel.
+// leads come from the page (dummy data for now). Stage changes live only in this state until Supabase is connected (PLAN.md, Step 10).
 export default function LeadsView({ leads }) {
+  const [pipelineLeads, setPipelineLeads] = useState(leads);
   const [selectedLeadId, setSelectedLeadId] = useState(null);
-  const selectedLead = leads.find((lead) => lead.id === selectedLeadId) ?? null;
-  // The row that opened the panel, so focus can go back to it after closing
-  const openerRef = useRef(null);
-  const shouldReduceMotion = useReducedMotion();
+  const selectedLead = pipelineLeads.find((lead) => lead.id === selectedLeadId) ?? null;
 
-  function handleLeadOpen(event, leadId) {
-    openerRef.current = event.currentTarget;
-    setSelectedLeadId(leadId);
+  // Only the leads in one stage, for one column
+  function leadsInStage(stage) {
+    return pipelineLeads.filter((lead) => lead.stage === stage);
   }
 
+  // Move a lead to a new stage and add a line to its activity log
+  function handleStageChange(leadId, newStage) {
+    const currentTime = new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+    const activityItem = { id: crypto.randomUUID(), time: currentTime, text: `Moved to ${newStage}` };
+
+    setPipelineLeads(
+      pipelineLeads.map((lead) => (lead.id === leadId ? { ...lead, stage: newStage, activity: [...lead.activity, activityItem] } : lead))
+    );
+  }
+
+  // Same as above, from a card's dropdown. The card moves to another column, so after React has
+  // re-drawn the board we put focus back on that card's dropdown (keyboard users keep their place).
+  function handleCardStageChange(leadId, newStage) {
+    handleStageChange(leadId, newStage);
+    setTimeout(() => document.getElementById(`lead-card-stage-${leadId}`)?.focus(), 0);
+  }
+
+  // Close the panel and put focus back on the card that opened it
   function handlePanelClose() {
+    const closedLeadId = selectedLeadId;
     setSelectedLeadId(null);
-    openerRef.current?.focus();
+    setTimeout(() => document.getElementById(`lead-card-open-${closedLeadId}`)?.focus(), 0);
   }
 
   return (
     <>
-      {/* Column labels: tablet and up only (on mobile each row is a stacked card) */}
-      <div className="text-small text-muted hidden gap-3 px-5 md:grid md:grid-cols-4" aria-hidden="true">
-        <span>Customer</span>
-        <span>Issue</span>
-        <span>Lead score</span>
-        <span>Status</span>
+      {/* Pipeline board: stacked on mobile, 2 columns on tablet, one scrollable row on desktop */}
+      <div className="grid gap-4 md:grid-cols-2 lg:flex lg:items-start lg:overflow-x-auto lg:pb-2">
+        <PipelineColumn title="New" leads={leadsInStage("New")} onLeadOpen={setSelectedLeadId} onStageChange={handleCardStageChange} />
+        <PipelineColumn title="Contacted" leads={leadsInStage("Contacted")} onLeadOpen={setSelectedLeadId} onStageChange={handleCardStageChange} />
+        <PipelineColumn title="Booked" leads={leadsInStage("Booked")} onLeadOpen={setSelectedLeadId} onStageChange={handleCardStageChange} />
+        <PipelineColumn title="Completed" leads={leadsInStage("Completed")} onLeadOpen={setSelectedLeadId} onStageChange={handleCardStageChange} />
+        <PipelineColumn title="Lost" leads={leadsInStage("Lost")} onLeadOpen={setSelectedLeadId} onStageChange={handleCardStageChange} />
       </div>
 
-      {/* Lead rows: each row is a button that opens the detail panel */}
-      <ul className="flex flex-col gap-3">
-        {leads.map((lead) => (
-          <li key={lead.id}>
-            <motion.button
-              type="button"
-              onClick={(event) => handleLeadOpen(event, lead.id)}
-              aria-haspopup="dialog"
-              whileHover={shouldReduceMotion ? undefined : { y: -2 }}
-              className="lead-row grid w-full items-center gap-3 px-5 py-4 text-left md:grid-cols-4"
-            >
-              <span className="flex flex-col">
-                <span className="lead-name">{lead.name}</span>
-                <span className="text-small text-muted">
-                  {lead.area} · {lead.receivedAt}
-                </span>
-              </span>
-              <span className="flex flex-col">
-                <span>{lead.issue}</span>
-                <span className="text-small text-muted">{lead.appliance}</span>
-              </span>
-              <span>
-                <Badge variant={lead.leadScore >= HOT_LEAD_SCORE ? "urgent" : "score"}>
-                  Score {lead.leadScore}
-                  {lead.leadScore >= HOT_LEAD_SCORE && " · Hot"}
-                </Badge>
-              </span>
-              <span>
-                <Badge variant={STATUS_BADGE_VARIANTS[lead.status]}>{lead.status}</Badge>
-              </span>
-            </motion.button>
-          </li>
-        ))}
-      </ul>
-
-      <LeadDetailPanel
-        lead={selectedLead}
-        onClose={handlePanelClose}
-        scoreVariant={selectedLead && selectedLead.leadScore >= HOT_LEAD_SCORE ? "urgent" : "score"}
-        statusVariant={selectedLead ? STATUS_BADGE_VARIANTS[selectedLead.status] : "mint"}
-      />
+      <LeadDetailPanel lead={selectedLead} onClose={handlePanelClose} onStageChange={handleStageChange} />
     </>
   );
 }

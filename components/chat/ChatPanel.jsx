@@ -2,8 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import Button from "@/components/ui/Button";
 import ChatBubble from "@/components/ui/ChatBubble";
 import { DUMMY_ASSISTANT_REPLY } from "@/lib/dummy-data";
+import ChatBookingCard from "./ChatBookingCard";
 import ChatComposer from "./ChatComposer";
 import TypingIndicator from "./TypingIndicator";
 
@@ -19,6 +21,8 @@ const CORNER_ANIMATION = {
 };
 
 // Chat panel: header, welcome message, the conversation, typing indicator and composer.
+// Booking in the chat: an assistant message with offerBooking: true gets a "Book a visit here" button. It opens a
+// booking card inside the conversation, which turns into a confirmation message once booked. The button shows only once.
 // Mobile: full screen, focus trapped and page scroll locked. Tablet and up: a corner panel, the page stays usable.
 // Esc closes it on every screen.
 export default function ChatPanel({ isOpen, onClose, messages, onMessagesChange }) {
@@ -30,6 +34,9 @@ export default function ChatPanel({ isOpen, onClose, messages, onMessagesChange 
   const isMobile = isOpen && window.matchMedia("(max-width: 767px)").matches;
   const panelAnimation = isMobile ? FULL_SCREEN_ANIMATION : CORNER_ANIMATION;
   const transition = shouldReduceMotion ? { duration: 0 } : { type: "spring", bounce: 0.15, duration: 0.45 };
+  const lastMessage = messages[messages.length - 1];
+  // True once the booking card was opened (or the visit is already booked), so the button is not offered again
+  const hasBookingStarted = messages.some((message) => message.sender === "booking-card" || message.isBookingConfirmation);
 
   // On open: focus the message input. Mobile (full screen) also locks the page scroll.
   useEffect(() => {
@@ -82,13 +89,31 @@ export default function ChatPanel({ isOpen, onClose, messages, onMessagesChange 
     onMessagesChange((currentMessages) => [...currentMessages, customerMessage]);
     setIsAssistantTyping(true);
 
-    // TODO: send the message (and photo) to the AI assistant API and show its real reply.
-    // For now a dummy reply arrives after a short typing pause.
+    // TODO: send the message (and photo) to the AI assistant API and show its real reply (PLAN.md, Step 13).
+    // The AI will decide when to offer a booking by sending offerBooking: true.
+    // For now a dummy reply arrives after a short typing pause and always offers a booking.
     setTimeout(() => {
-      const assistantMessage = { id: crypto.randomUUID(), sender: "assistant", text: DUMMY_ASSISTANT_REPLY };
+      const assistantMessage = { id: crypto.randomUUID(), sender: "assistant", text: DUMMY_ASSISTANT_REPLY, offerBooking: true };
       onMessagesChange((currentMessages) => [...currentMessages, assistantMessage]);
       setIsAssistantTyping(false);
     }, 1500);
+  }
+
+  // "Book a visit here": add the booking card to the conversation
+  function handleBookingOffer() {
+    onMessagesChange((currentMessages) => [...currentMessages, { id: crypto.randomUUID(), sender: "booking-card" }]);
+  }
+
+  // Booked: swap the booking card for the assistant's confirmation, then put focus back on the message input
+  function handleChatBooked(date, timeSlot) {
+    const confirmationMessage = {
+      id: crypto.randomUUID(),
+      sender: "assistant",
+      text: `You're booked for ${date} at ${timeSlot}. We'll confirm by email.`,
+      isBookingConfirmation: true,
+    };
+    onMessagesChange((currentMessages) => currentMessages.map((message) => (message.sender === "booking-card" ? confirmationMessage : message)));
+    document.getElementById("chat-message-input")?.focus();
   }
 
   return (
@@ -128,9 +153,22 @@ export default function ChatPanel({ isOpen, onClose, messages, onMessagesChange 
           {/* Conversation: welcome message, then the messages of this visit; new ones are announced */}
           <div ref={messageListRef} className="flex flex-1 flex-col gap-3 overflow-y-auto px-5 py-4" aria-live="polite">
             <ChatBubble text="Hi! I'm the CoolFix assistant. Tell me what's wrong with your AC or fridge, and send a photo if you can." />
-            {messages.map((message) => (
-              <ChatBubble key={message.id} isCustomer={message.sender === "customer"} text={message.text} photoUrl={message.photoUrl} />
-            ))}
+            {messages.map((message) =>
+              message.sender === "booking-card" ? (
+                <ChatBookingCard key={message.id} onBooked={handleChatBooked} />
+              ) : (
+                <ChatBubble key={message.id} isCustomer={message.sender === "customer"} text={message.text} photoUrl={message.photoUrl} />
+              )
+            )}
+
+            {/* Booking offer: under the newest assistant message, until the booking card is opened */}
+            {lastMessage?.offerBooking && !hasBookingStarted && !isAssistantTyping && (
+              <div className="flex justify-start">
+                <Button variant="secondary" onClick={handleBookingOffer}>
+                  Book a visit here
+                </Button>
+              </div>
+            )}
             {isAssistantTyping && <TypingIndicator />}
           </div>
 
