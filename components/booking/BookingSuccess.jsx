@@ -1,7 +1,8 @@
 import Button from "@/components/ui/Button";
 
-// Booking success: shown inside the modal after the form is sent
-export default function BookingSuccess({ date, timeSlot, onClose }) {
+// Booking success: shown inside the modal after the booking is saved.
+// dayLabel: "Wed, 25 Nov 2026", slotLabel: "8:00 AM – 10:00 AM" (both come from the bookings API)
+export default function BookingSuccess({ dayLabel, slotLabel, onClose }) {
   return (
     <div className="flex flex-col items-center gap-4 py-6 text-center" role="status">
       {/* Mint clay check mark */}
@@ -13,7 +14,7 @@ export default function BookingSuccess({ date, timeSlot, onClose }) {
 
       <h3>Booked! We&apos;ll confirm by email</h3>
       <p className="text-muted">
-        Your visit is requested for {date} at {timeSlot}. A technician will confirm shortly.
+        Your visit is booked for {dayLabel}, {slotLabel}. A technician will confirm shortly.
       </p>
       <Button onClick={onClose}>Close</Button>
     </div>

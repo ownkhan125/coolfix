@@ -46,6 +46,8 @@ The company sends a technician itself — the app does not manage technicians.
 |---|---|
 | Supabase connection (server side) | `lib/supabase-server.js` |
 | Supabase connection (browser, login) | `lib/supabase-browser.js` |
+| Supabase connection with the secret key (server API only) | `lib/supabase-admin.js` |
+| Load / save business settings | `lib/business-settings.js` |
 | Free slot calculation | `lib/slots.js` |
 | Send contact to HubSpot | `lib/hubspot.js` |
 | Confirmation email (Resend) | `lib/email.js` |
@@ -102,11 +104,11 @@ Customer submits
 
 ### Part B — Supabase (real data)
 
-- [ ] **Step 4 — Setup.** Owner creates the Supabase project. Keys go in `.env.local`. Install `@supabase/supabase-js` and `@supabase/ssr` (after approval).
-- [ ] **Step 5 — Tables.** Write `supabase/schema.sql`. Owner runs it in Supabase.
-- [ ] **Step 6 — Login.** Magic link, protected dashboard, sign out. Only the owner's email can sign in.
-- [ ] **Step 7 — Settings.** Save and load from Supabase.
-- [ ] **Step 8 — Slots.** `lib/slots.js` + `/api/slots`. The time slot picker shows real free slots.
+- [x] ✅ **Step 4 — Setup.** Owner creates the Supabase project. Keys go in `.env.local`. Install `@supabase/supabase-js` and `@supabase/ssr` (after approval).
+- [x] ✅ **Step 5 — Tables.** Write `supabase/schema.sql`. Owner runs it in Supabase.
+- [x] ✅ **Step 6 — Login.** Magic link, protected dashboard, sign out. Only the owner's email can sign in.
+- [x] ✅ **Step 7 — Settings.** Save and load from Supabase.
+- [x] ✅ **Step 8 — Slots.** `lib/slots.js` + `/api/slots`. The time slot picker shows real free slots.
 - [ ] **Step 9 — Save bookings.** `/api/bookings`, booking form connected, photo upload.
 - [ ] **Step 10 — Dashboard on real data.** Overview, Leads, Bookings and pipeline stage changes.
 
@@ -125,6 +127,7 @@ Customer submits
 | Step | Task |
 |---|---|
 | 4 | Create a Supabase project and copy the URL and keys |
+| 8 | Add `SUPABASE_SECRET_KEY` and `BUSINESS_TIME_ZONE=Asia/Karachi` to `.env.local` |
 | 5 | Run `supabase/schema.sql` in the Supabase SQL editor |
 | 11 | Create a HubSpot Private App and copy the token |
 | 12 | Create a Resend account and copy the API key |

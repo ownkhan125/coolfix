@@ -17,19 +17,27 @@ const EMPTY_CHAT_BOOKING = {
 };
 
 // Chat booking card: a small booking form inside the chat conversation (contact details, day, time slot).
-// Validates on submit, shows a loading state, then calls onBooked(date, timeSlot).
-export default function ChatBookingCard({ onBooked }) {
+// Validates on submit, sends it to POST /api/bookings, then calls onBooked(dayLabel, slotLabel).
+// conversationText = what the customer wrote in the chat; it is saved as the lead's issue.
+export default function ChatBookingCard({ conversationText, onBooked }) {
   const [bookingValues, setBookingValues] = useState(EMPTY_CHAT_BOOKING);
   const [fieldErrors, setFieldErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // A message for the whole card, for example when the server could not save the booking
+  const [formError, setFormError] = useState("");
+  // Goes up by one when the chosen slot was just taken, so the time slot picker loads the free slots again
+  const [slotPickerVersion, setSlotPickerVersion] = useState(0);
 
   // Earliest day that can be picked: today, as YYYY-MM-DD (the card only renders in the browser)
   const today = new Date().toLocaleDateString("en-CA");
 
-  // One handler for every field: the input's name says which value to update; its error clears while typing
+  // One handler for every field: the input's name says which value to update; its error clears while typing.
+  // A new day has other free slots, so changing the day also clears the chosen time slot.
   function handleFieldChange(event) {
     const { name, value } = event.target;
-    setBookingValues({ ...bookingValues, [name]: value });
+    const newValues = { ...bookingValues, [name]: value };
+    if (name === "date") newValues.timeSlot = "";
+    setBookingValues(newValues);
     setFieldErrors({ ...fieldErrors, [name]: undefined });
   }
 
@@ -46,10 +54,36 @@ export default function ChatBookingCard({ onBooked }) {
     if (Object.keys(newErrors).length > 0) return;
 
     setIsSubmitting(true);
-    // TODO: send the booking to the API with the chat conversation, e.g. POST /api/bookings (PLAN.md, Step 9 and Step 13).
-    // For now we only wait a moment so the loading state is visible.
-    await new Promise((resolve) => setTimeout(resolve, 1200));
-    onBooked(bookingValues.date, bookingValues.timeSlot);
+    setFormError("");
+
+    // Same API as the booking form. Chat photos and the AI summary come in PLAN.md, Step 13.
+    const formData = new FormData();
+    formData.append("source", "chat");
+    formData.append("problem", conversationText);
+    Object.entries(bookingValues).forEach(([fieldName, value]) => formData.append(fieldName, value));
+
+    try {
+      const response = await fetch("/api/bookings", { method: "POST", body: formData });
+      const body = await response.json();
+
+      if (response.ok) {
+        onBooked(body.dayLabel, body.slotLabel);
+        return;
+      }
+      if (response.status === 409) {
+        // Slot just taken: clear it, show the message under the slots and load the free slots again
+        setBookingValues({ ...bookingValues, timeSlot: "" });
+        setFieldErrors({ timeSlot: body.error });
+        setSlotPickerVersion(slotPickerVersion + 1);
+      } else {
+        setFieldErrors(body.fieldErrors ?? {});
+        setFormError(body.error);
+      }
+    } catch (sendError) {
+      console.error("[bookings] Sending the chat booking failed:", sendError.message);
+      setFormError("We couldn't reach the server. Please check your connection and try again.");
+    }
+    setIsSubmitting(false);
   }
 
   return (
@@ -76,9 +110,14 @@ export default function ChatBookingCard({ onBooked }) {
       <FormField label="Preferred day" htmlFor="chat-booking-date" error={fieldErrors.date}>
         <input id="chat-booking-date" name="date" type="date" min={today} value={bookingValues.date} onChange={handleFieldChange} className="clay-input w-full px-3 py-2" {...errorProps("date", "chat-booking-date")} />
       </FormField>
-      <TimeSlotPicker value={bookingValues.timeSlot} onChange={handleFieldChange} error={fieldErrors.timeSlot} />
+      <TimeSlotPicker key={slotPickerVersion} date={bookingValues.date} value={bookingValues.timeSlot} onChange={handleFieldChange} error={fieldErrors.timeSlot} />
 
-      {/* Submit: shows a loading label while sending */}
+      {/* Submit: a card-wide error (if any) and the button, which shows a loading label while sending */}
+      {formError && (
+        <p className="field-error" role="alert">
+          {formError}
+        </p>
+      )}
       <Button type="submit" disabled={isSubmitting}>
         {isSubmitting ? "Booking your visit…" : "Book my visit"}
       </Button>

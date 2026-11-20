@@ -10,10 +10,12 @@ export default function DashboardTopBar() {
         <p className="logo-text">{DUMMY_BUSINESS.name}</p>
       </div>
 
-      {/* TODO: sign out with Supabase (supabase.auth.signOut()), then go to /login. For now it only links there. */}
-      <Button href="/login" variant="secondary">
-        Log out
-      </Button>
+      {/* Log out: a small form that posts to app/auth/logout/route.js, which ends the session and opens /login */}
+      <form action="/auth/logout" method="post">
+        <Button type="submit" variant="secondary">
+          Log out
+        </Button>
+      </form>
     </header>
   );
 }

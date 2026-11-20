@@ -37,6 +37,11 @@ export default function ChatPanel({ isOpen, onClose, messages, onMessagesChange 
   const lastMessage = messages[messages.length - 1];
   // True once the booking card was opened (or the visit is already booked), so the button is not offered again
   const hasBookingStarted = messages.some((message) => message.sender === "booking-card" || message.isBookingConfirmation);
+  // Everything the customer typed, one message per line: saved as the lead's issue when they book
+  const conversationText = messages
+    .filter((message) => message.sender === "customer" && message.text)
+    .map((message) => message.text)
+    .join("\n");
 
   // On open: focus the message input. Mobile (full screen) also locks the page scroll.
   useEffect(() => {
@@ -105,11 +110,11 @@ export default function ChatPanel({ isOpen, onClose, messages, onMessagesChange 
   }
 
   // Booked: swap the booking card for the assistant's confirmation, then put focus back on the message input
-  function handleChatBooked(date, timeSlot) {
+  function handleChatBooked(dayLabel, slotLabel) {
     const confirmationMessage = {
       id: crypto.randomUUID(),
       sender: "assistant",
-      text: `You're booked for ${date} at ${timeSlot}. We'll confirm by email.`,
+      text: `You're booked for ${dayLabel}, ${slotLabel}. We'll confirm by email.`,
       isBookingConfirmation: true,
     };
     onMessagesChange((currentMessages) => currentMessages.map((message) => (message.sender === "booking-card" ? confirmationMessage : message)));
@@ -155,7 +160,7 @@ export default function ChatPanel({ isOpen, onClose, messages, onMessagesChange 
             <ChatBubble text="Hi! I'm the CoolFix assistant. Tell me what's wrong with your AC or fridge, and send a photo if you can." />
             {messages.map((message) =>
               message.sender === "booking-card" ? (
-                <ChatBookingCard key={message.id} onBooked={handleChatBooked} />
+                <ChatBookingCard key={message.id} conversationText={conversationText} onBooked={handleChatBooked} />
               ) : (
                 <ChatBubble key={message.id} isCustomer={message.sender === "customer"} text={message.text} photoUrl={message.photoUrl} />
               )

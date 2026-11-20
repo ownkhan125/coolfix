@@ -3,9 +3,11 @@
 import { useState } from "react";
 import Button from "@/components/ui/Button";
 import FormField from "@/components/ui/FormField";
+import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 
 // Owner login form: email + "Send magic link". After sending, the card shows "Check your email".
 // No password: the owner signs in with the link from the email.
+// Only the existing owner account can get a link (shouldCreateUser: false, and sign-ups are off in Supabase).
 export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
@@ -20,10 +22,28 @@ export default function LoginForm() {
     }
 
     setIsSending(true);
-    // TODO: Supabase Auth — send the magic link, e.g. supabase.auth.signInWithOtp({ email }).
-    // For now we only wait a moment so the loading state is visible.
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    const supabase = createSupabaseBrowserClient();
+    const { error } = await supabase.auth.signInWithOtp({
+      email: email.trim(),
+      options: {
+        shouldCreateUser: false,
+        // The link in the email opens this address (it must be listed in Supabase → Authentication → URL Configuration)
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
     setIsSending(false);
+
+    if (error) {
+      console.error("[auth] Sending the magic link failed:", error.message);
+      // 429 = Supabase's email limit was reached
+      setEmailError(
+        error.status === 429
+          ? "Too many emails were sent. Please wait a few minutes and try again."
+          : "We couldn't send a link to this email. Please check it is the owner email."
+      );
+      return;
+    }
+
     setIsLinkSent(true);
   }
 

@@ -4,9 +4,11 @@ import { useState } from "react";
 import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import FormField from "@/components/ui/FormField";
+import { saveBusinessSettings } from "@/lib/business-settings";
+import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 
-// Settings form: business name, offered services, working hours and booking slots. "Save changes" is a dummy save for now.
-// business = the saved settings (dummy data for now, Supabase later).
+// Settings form: business name, offered services, working hours and booking slots. "Save changes" saves them to Supabase.
+// business = the saved settings, loaded by app/dashboard/settings/page.jsx.
 export default function SettingsForm({ business }) {
   const [businessName, setBusinessName] = useState(business.name);
   const [services, setServices] = useState(business.services);
@@ -18,7 +20,7 @@ export default function SettingsForm({ business }) {
   const [slotHours, setSlotHours] = useState(String(business.slotHours));
   const [bookingsPerSlot, setBookingsPerSlot] = useState(String(business.bookingsPerSlot));
   const [formErrors, setFormErrors] = useState({});
-  // "idle" = nothing to report, "saving" = waiting, "saved" = show the "Changes saved" chip
+  // "idle" = nothing to report, "saving" = waiting, "saved" = show the "Changes saved" chip, "error" = saving failed
   const [saveStatus, setSaveStatus] = useState("idle");
 
   function handleServiceToggle(serviceId) {
@@ -52,10 +54,18 @@ export default function SettingsForm({ business }) {
     if (Object.keys(newErrors).length > 0) return;
 
     setSaveStatus("saving");
-    // TODO: save the settings to Supabase (business name, services, working hours, slot hours, bookings per slot).
-    // For now we only wait a moment so the loading state is visible.
-    await new Promise((resolve) => setTimeout(resolve, 800));
-    setSaveStatus("saved");
+    const supabase = createSupabaseBrowserClient();
+    const isSaved = await saveBusinessSettings(supabase, {
+      name: businessName.trim(),
+      services,
+      opensAt,
+      closesAt,
+      isOpenSaturday,
+      isOpenSunday,
+      slotHours: slotHoursNumber,
+      bookingsPerSlot: bookingsPerSlotNumber,
+    });
+    setSaveStatus(isSaved ? "saved" : "error");
   }
 
   return (
@@ -176,7 +186,10 @@ export default function SettingsForm({ business }) {
         <Button type="submit" disabled={saveStatus === "saving"}>
           {saveStatus === "saving" ? "Saving…" : "Save changes"}
         </Button>
-        <p role="status">{saveStatus === "saved" && <Badge>✓ Changes saved</Badge>}</p>
+        <p role="status">
+          {saveStatus === "saved" && <Badge>✓ Changes saved</Badge>}
+          {saveStatus === "error" && <span className="field-error">Saving failed. Please try again.</span>}
+        </p>
       </div>
     </form>
   );
