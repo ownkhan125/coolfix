@@ -1,15 +1,19 @@
 "use client";
 
 import { useState } from "react";
+import { saveLeadStage } from "@/lib/leads";
+import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 import LeadDetailPanel from "./LeadDetailPanel";
 import PipelineColumn from "./PipelineColumn";
 
 // Leads view: the pipeline board (New, Contacted, Booked, Completed, Lost).
 // The owner moves a lead with the "Move to" dropdown on its card or in the detail panel.
-// leads come from the page (dummy data for now). Stage changes live only in this state until Supabase is connected (PLAN.md, Step 10).
+// leads come from the page (loaded from Supabase). A stage change shows at once and is saved to Supabase;
+// if saving fails, the lead jumps back to its old stage and a message explains why.
 export default function LeadsView({ leads }) {
   const [pipelineLeads, setPipelineLeads] = useState(leads);
   const [selectedLeadId, setSelectedLeadId] = useState(null);
+  const [stageError, setStageError] = useState("");
   const selectedLead = pipelineLeads.find((lead) => lead.id === selectedLeadId) ?? null;
 
   // Only the leads in one stage, for one column
@@ -17,14 +21,21 @@ export default function LeadsView({ leads }) {
     return pipelineLeads.filter((lead) => lead.stage === stage);
   }
 
-  // Move a lead to a new stage and add a line to its activity log
-  function handleStageChange(leadId, newStage) {
-    const currentTime = new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
-    const activityItem = { id: crypto.randomUUID(), time: currentTime, text: `Moved to ${newStage}` };
+  // Move a lead to a new stage: show it at once, then save it (lib/leads.js). On failure, put the old leads back.
+  async function handleStageChange(leadId, newStage) {
+    const previousLeads = pipelineLeads;
+    const activityItem = { id: crypto.randomUUID(), time: "Just now", text: `Moved to ${newStage}` };
 
+    setStageError("");
     setPipelineLeads(
       pipelineLeads.map((lead) => (lead.id === leadId ? { ...lead, stage: newStage, activity: [...lead.activity, activityItem] } : lead))
     );
+
+    const isSaved = await saveLeadStage(createSupabaseBrowserClient(), leadId, newStage);
+    if (!isSaved) {
+      setPipelineLeads(previousLeads);
+      setStageError("We couldn't move the lead. Please try again.");
+    }
   }
 
   // Same as above, from a card's dropdown. The card moves to another column, so after React has
@@ -43,6 +54,12 @@ export default function LeadsView({ leads }) {
 
   return (
     <>
+      {stageError && (
+        <p className="field-error" role="alert">
+          {stageError}
+        </p>
+      )}
+
       {/* Pipeline board: stacked on mobile, 2 columns on tablet, one scrollable row on desktop */}
       <div className="grid gap-4 md:grid-cols-2 lg:flex lg:items-start lg:overflow-x-auto lg:pb-2">
         <PipelineColumn title="New" leads={leadsInStage("New")} onLeadOpen={setSelectedLeadId} onStageChange={handleCardStageChange} />

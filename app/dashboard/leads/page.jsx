@@ -1,11 +1,14 @@
 import LeadsView from "@/components/dashboard/LeadsView";
-import { DUMMY_LEADS } from "@/lib/dummy-data";
+import { loadLeads } from "@/lib/leads";
+import { createSupabaseServerClient } from "@/lib/supabase-server";
 
 export const metadata = { title: "Leads — CoolFix dashboard" };
 
-// Leads page: every lead from the chat and the booking form. Click a lead to see its details.
-export default function DashboardLeadsPage() {
-  // TODO: load the leads from Supabase instead of the dummy data
+// Leads page: every lead from the chat and the booking form, loaded from Supabase, on the pipeline board
+export default async function DashboardLeadsPage() {
+  const supabase = await createSupabaseServerClient();
+  const leads = await loadLeads(supabase, process.env.BUSINESS_TIME_ZONE);
+
   return (
     <>
       <div>
@@ -13,7 +16,14 @@ export default function DashboardLeadsPage() {
         <p className="text-muted mt-1">New requests, scored by the assistant. Click a lead for details.</p>
       </div>
 
-      <LeadsView leads={DUMMY_LEADS} />
+      {/* The pipeline board, or a message when the leads could not be loaded (details in the server log, tagged [leads]) */}
+      {leads ? (
+        <LeadsView leads={leads} />
+      ) : (
+        <p className="field-error" role="alert">
+          We couldn&apos;t load your leads. Please refresh the page.
+        </p>
+      )}
     </>
   );
 }

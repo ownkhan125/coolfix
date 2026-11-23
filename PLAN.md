@@ -109,12 +109,12 @@ Customer submits
 - [x] ✅ **Step 6 — Login.** Magic link, protected dashboard, sign out. Only the owner's email can sign in.
 - [x] ✅ **Step 7 — Settings.** Save and load from Supabase.
 - [x] ✅ **Step 8 — Slots.** `lib/slots.js` + `/api/slots`. The time slot picker shows real free slots.
-- [ ] **Step 9 — Save bookings.** `/api/bookings`, booking form connected, photo upload.
-- [ ] **Step 10 — Dashboard on real data.** Overview, Leads, Bookings and pipeline stage changes.
+- [x] ✅ **Step 9 — Save bookings.** `/api/bookings`, booking form connected, photo upload.
+- [x] ✅ **Step 10 — Dashboard on real data.** (10a Leads + pipeline + photos; 10b Bookings + Overview + top bar) Overview, Leads, Bookings and pipeline stage changes.
 
 ### Part C — Outside services
 
-- [ ] **Step 11 — HubSpot.** Owner creates a HubSpot Private App (contacts permission only). `lib/hubspot.js` with `fetch`.
+- [ ] **Step 11 — HubSpot.** Owner creates a HubSpot Service Key (contacts permission only — legacy Private Apps can no longer be created since 26 Oct 2026). `lib/hubspot.js` with `fetch`.
 - [ ] **Step 12 — Email.** Owner creates a Resend account. `lib/email.js` with `fetch`.
 - [ ] **Step 13 — AI.** After the provider is chosen: `lib/ai.js` + `/api/chat` (lead score, suggestion, photo analysis, booking from chat).
 
@@ -129,6 +129,6 @@ Customer submits
 | 4 | Create a Supabase project and copy the URL and keys |
 | 8 | Add `SUPABASE_SECRET_KEY` and `BUSINESS_TIME_ZONE=Asia/Karachi` to `.env.local` |
 | 5 | Run `supabase/schema.sql` in the Supabase SQL editor |
-| 11 | Create a HubSpot Private App and copy the token |
-| 12 | Create a Resend account and copy the API key |
+| 11 | Create a HubSpot **Service Key** (scope `crm.objects.contacts.write`) and add `HUBSPOT_SERVICE_KEY` to `.env.local` |
+| 12 | Create a Resend account; add `RESEND_API_KEY` and `EMAIL_FROM` to `.env.local` (real customers need a verified domain) |
 | 13 | Choose the AI provider and get its API key |

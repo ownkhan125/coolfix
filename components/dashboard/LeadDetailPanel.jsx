@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import Badge from "@/components/ui/Badge";
 import StageSelect from "./StageSelect";
@@ -103,11 +104,11 @@ export default function LeadDetailPanel({ lead, onClose, onStageChange }) {
               </button>
             </div>
 
-            {/* Chips: hot / score (form leads are always hot, chat leads show the AI score) and appliance */}
+            {/* Chips: hot / score (form leads are always hot, chat leads show the AI score once given) and appliance */}
             <div className="flex flex-wrap gap-2">
-              {lead.source === "form" ? (
-                <Badge variant="urgent">Hot · Form</Badge>
-              ) : (
+              {lead.source === "form" && <Badge variant="urgent">Hot · Form</Badge>}
+              {lead.source === "chat" && lead.leadScore === null && <Badge variant="score">Chat · Not scored yet</Badge>}
+              {lead.source === "chat" && lead.leadScore !== null && (
                 <Badge variant={lead.isHot ? "urgent" : "score"}>
                   Score {lead.leadScore}
                   {lead.isHot && " · Hot"}
@@ -119,16 +120,28 @@ export default function LeadDetailPanel({ lead, onClose, onStageChange }) {
             {/* Pipeline stage */}
             <StageSelect id="lead-detail-stage" value={lead.stage} onStageChange={(newStage) => onStageChange(lead.id, newStage)} />
 
-            {/* Customer photo placeholder */}
-            <div className="photo-placeholder flex h-44 items-center justify-center" role="img" aria-label={`Photo sent by ${lead.name}`}>
-              📷 Customer photo
-            </div>
+            {/* Customer photos: private links that work for one hour; a click opens the full photo in a new tab */}
+            {lead.photoUrls.length > 0 ? (
+              <div className="flex flex-wrap gap-3">
+                {lead.photoUrls.map((photoUrl, photoIndex) => (
+                  <a key={photoUrl} href={photoUrl} target="_blank" rel="noopener noreferrer" aria-label={`Open photo ${photoIndex + 1} from ${lead.name}`}>
+                    <Image src={photoUrl} alt={`Photo ${photoIndex + 1} from ${lead.name}`} width={112} height={112} unoptimized className="upload-thumb h-28 w-28 object-cover" />
+                  </a>
+                ))}
+              </div>
+            ) : (
+              <p className="text-small text-muted">No photos sent.</p>
+            )}
 
             {/* Contact details */}
             <dl className="grid grid-cols-2 gap-4">
               <div>
                 <dt className="text-small text-muted">Phone</dt>
                 <dd className="lead-name">{lead.phone}</dd>
+              </div>
+              <div>
+                <dt className="text-small text-muted">Email</dt>
+                <dd className="lead-name break-all">{lead.email}</dd>
               </div>
               <div>
                 <dt className="text-small text-muted">Area</dt>

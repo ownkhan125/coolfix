@@ -25,13 +25,14 @@ export default function LeadCard({ lead, onOpen, onStageChange }) {
             {lead.area} · {lead.receivedAt}
           </span>
         </span>
-        <span>{lead.issue}</span>
+        {/* Issue: at most 2 lines on the card (chat leads can be long); the full text is in the detail panel */}
+        <span className="line-clamp-2">{lead.issue}</span>
 
-        {/* Badges: form leads are always hot (no score); chat leads show the AI score */}
+        {/* Badges: form leads are always hot (no score); chat leads show the AI score once the AI has given one */}
         <span className="flex flex-wrap gap-2">
-          {lead.source === "form" ? (
-            <Badge variant="urgent">Hot · Form</Badge>
-          ) : (
+          {lead.source === "form" && <Badge variant="urgent">Hot · Form</Badge>}
+          {lead.source === "chat" && lead.leadScore === null && <Badge variant="score">Chat · Not scored yet</Badge>}
+          {lead.source === "chat" && lead.leadScore !== null && (
             <Badge variant={lead.isHot ? "urgent" : "score"}>
               Score {lead.leadScore}
               {lead.isHot && " · Hot"}
